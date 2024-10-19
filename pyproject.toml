@@ -52,6 +52,6 @@ lint.mccabe.max-complexity = 20
 profile = "black"
 
 [tool.comfy]
-PublisherId = ""
+PublisherId = "visionatrix"
 DisplayName = "ComfyUI-Gemini"
 Icon = ""
