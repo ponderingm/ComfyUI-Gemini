@@ -1,6 +1,6 @@
 [project]
 name = "comfyui-gemini"
-version = "1.0.0"
+version = "1.0.1"
 description = "Nodes for Google Gemini API, focusing on backward compatibility and stability within ComfyUI."
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
@@ -54,4 +54,4 @@ profile = "black"
 [tool.comfy]
 PublisherId = "visionatrix"
 DisplayName = "ComfyUI-Gemini"
-Icon = ""
+Icon = "https://raw.githubusercontent.com/Visionatrix/VixFlowsDocs/main/screenshots/logo_org_800x800.png"
