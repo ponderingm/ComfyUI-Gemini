@@ -18,12 +18,12 @@ class GeminiNode:
                 "model": (["gemini-1.5-flash-002", "gemini-1.5-pro-002"],),
             },
             "optional": {
-                "api_key": ("STRING",),
-                "proxy": ("STRING",),
+                "api_key": ("STRING", {}),
+                "proxy": ("STRING", {}),
                 "image_1": ("IMAGE",),
                 "image_2": ("IMAGE",),
                 "image_3": ("IMAGE",),
-                "system_instruction": ("STRING",),
+                "system_instruction": ("STRING", {}),
                 "error_fallback_value": ("STRING", {"lazy": True}),
             },
         }
