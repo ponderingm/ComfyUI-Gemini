@@ -1,6 +1,6 @@
 [project]
 name = "comfyui-gemini"
-version = "1.0.1"
+version = "1.0.2"
 description = "Nodes for Google Gemini API, focusing on backward compatibility and stability within ComfyUI."
 license = { file = "LICENSE" }
 requires-python = ">=3.10"

@@ -1,4 +1,5 @@
 import logging
+import random
 
 import google.generativeai as genai
 from torch import Tensor
@@ -10,6 +11,8 @@ class GeminiNode:
 
     @classmethod
     def INPUT_TYPES(cls):  # noqa
+        seed = random.randint(1, 2**31)
+
         return {
             "required": {
                 "prompt": ("STRING", {"default": "Why number 42 is important?", "multiline": True}),
@@ -25,6 +28,7 @@ class GeminiNode:
                 "image_3": ("IMAGE",),
                 "system_instruction": ("STRING", {}),
                 "error_fallback_value": ("STRING", {"lazy": True}),
+                "seed": ("INT", {"default": seed, "min": 0, "max": 2**31, "step": 1}),
             },
         }
 
@@ -53,6 +57,7 @@ class GeminiNode:
         image_3: Tensor | list[Tensor] | None = None,
         system_instruction: str | None = None,
         error_fallback_value: str | None = None,
+        **kwargs,
     ):
         self.text_output = None
         if not system_instruction:
