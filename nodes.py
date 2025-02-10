@@ -18,7 +18,7 @@ class GeminiNode:
                 "prompt": ("STRING", {"default": "Why number 42 is important?", "multiline": True}),
                 "safety_settings": (["BLOCK_NONE", "BLOCK_ONLY_HIGH", "BLOCK_MEDIUM_AND_ABOVE"],),
                 "response_type": (["text", "json"],),
-                "model": (["gemini-1.5-flash-002", "gemini-1.5-pro-002"],),
+                "model": (["gemini-1.5-flash-002", "gemini-2.0-flash-001", "gemini-1.5-pro-002"],),
             },
             "optional": {
                 "api_key": ("STRING", {}),

@@ -46,7 +46,8 @@ These nodes integrate the Gemini API into ComfyUI, allowing you to send prompts 
 - **model (CHOICE)**:
   - Selects the Gemini model to use.
   - Options:
-    - `gemini-1.5-flash-002`: Standard model.
+    - `gemini-1.5-flash-002`: Old version of the fast and free model.
+    - `gemini-2.0-flash-001`: New version of the free and even better model.
     - `gemini-1.5-pro-002`: Pro model with advanced capabilities.
 - **api_key (STRING, Optional)**:
   - Your Gemini API key.
