@@ -1,4 +1,5 @@
 import logging
+import os
 import random
 
 import google.generativeai as genai
@@ -73,7 +74,10 @@ class GeminiNode:
         for image in [image_1, image_2, image_3]:
             if image is not None:
                 images_to_send.extend(images_to_pillow(image))
-        genai.configure(api_key=api_key, transport="rest")
+        if "GOOGLE_API_KEY" in os.environ and not api_key:
+            genai.configure(transport="rest")
+        else:
+            genai.configure(api_key=api_key, transport="rest")
         model = genai.GenerativeModel(model, safety_settings=safety_settings, system_instruction=system_instruction)
         generation_config = genai.GenerationConfig(
             response_mime_type="application/json" if response_type == "json" else "text/plain"

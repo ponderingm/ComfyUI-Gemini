@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.5 - 2025-05-25]
+
+### Fixed
+
+- Corrected support of the `GOOGLE_API_KEY` env variable.
+
 ## [1.0.4 - 2025-04-04]
 
 ### Added
