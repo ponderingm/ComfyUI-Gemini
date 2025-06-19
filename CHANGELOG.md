@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0 - 2025-06-19]
+
+### Changed
+
+- Replaced Gemini `1.5` models with Gemini `2.5` models.
+
 ## [1.0.5 - 2025-05-25]
 
 ### Fixed
