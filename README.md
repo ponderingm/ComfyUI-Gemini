@@ -66,5 +66,9 @@ These nodes integrate the Gemini API into ComfyUI, allowing you to send prompts 
 - **error_fallback_value (STRING, Optional, Lazy Input)**:
   - Value to return if an error occurs when accessing Gemini.
   - If not set, the node will raise an exception on error.
+- **temperature (FLOAT, Optional, Lazy Input)**:
+  - Controls the randomness of the output. Any **negative value** means to use default value for model.
+- **num_predict (INT, Optional, Lazy Input)**:
+  - The maximum number of tokens to include in a candidate, value `0` means to use default value for model.
 
 ![Race and Gender Detection](https://raw.githubusercontent.com/Visionatrix/ComfyUI-Gemini/main/screenshots/race_gender.jpg)

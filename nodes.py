@@ -39,6 +39,8 @@ class GeminiNode:
                 "system_instruction": ("STRING", {}),
                 "error_fallback_value": ("STRING", {"lazy": True}),
                 "seed": ("INT", {"default": seed, "min": 0, "max": 2**31, "step": 1}),
+                "temperature": ("FLOAT", {"default": -0.05, "min": -0.05, "max": 1, "step": 0.05}),
+                "num_predict": ("INT", {"default": 0, "min": 0, "max": 1048576, "step": 1}),
             },
         }
 
@@ -67,6 +69,8 @@ class GeminiNode:
         image_3: Tensor | list[Tensor] | None = None,
         system_instruction: str | None = None,
         error_fallback_value: str | None = None,
+        temperature: float | None = None,
+        num_predict: int | None = None,
         **kwargs,
     ):
         self.text_output = None
@@ -84,6 +88,10 @@ class GeminiNode:
         generation_config = genai.GenerationConfig(
             response_mime_type="application/json" if response_type == "json" else "text/plain"
         )
+        if temperature is not None and temperature >= 0:
+            generation_config.temperature = temperature
+        if num_predict is not None and num_predict > 0:
+            generation_config.max_output_tokens = num_predict
         try:
             with temporary_env_var("HTTP_PROXY", proxy), temporary_env_var("HTTPS_PROXY", proxy):
                 response = model.generate_content([prompt, *images_to_send], generation_config=generation_config)

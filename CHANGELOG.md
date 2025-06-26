@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.2 - 2025-06-26]
+
+### Added
+
+- `temperature` and `num_predict` optional parameters.
+
 ## [1.1.1 - 2025-06-26]
 
 ### Added
