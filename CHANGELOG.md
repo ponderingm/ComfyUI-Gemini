@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.1 - 2025-06-26]
+
+### Added
+
+- New `gemma-3-12b-it` and `gemma-3-27b-it` models.
+
 ## [1.1.0 - 2025-06-19]
 
 ### Changed
