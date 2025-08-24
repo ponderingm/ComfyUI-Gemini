@@ -1,8 +1,11 @@
 import logging
 import os
 import random
+import json
 
 import google.generativeai as genai
+# スキーマ定義のためにTypeをインポート
+from google.generativeai.types import HarmCategory, HarmBlockThreshold, GenerationConfig
 from torch import Tensor
 
 from .utils import images_to_pillow, temporary_env_var
@@ -16,17 +19,12 @@ class GeminiNode:
 
         return {
             "required": {
-                "prompt": ("STRING", {"default": "Why number 42 is important?", "multiline": True}),
+                "prompt": ("STRING", {"default": "A girl in a sailor suit walking in Tokyo after the rain with a rainbow.", "multiline": True}),
                 "safety_settings": (["BLOCK_NONE", "BLOCK_ONLY_HIGH", "BLOCK_MEDIUM_AND_ABOVE"],),
-                "response_type": (["text", "json"],),
                 "model": (
                     [
-                        "gemma-3-12b-it",
-                        "gemma-3-27b-it",
-                        "gemini-2.0-flash-lite-001",
-                        "gemini-2.0-flash-001",
-                        "gemini-2.5-flash",
-                        "gemini-2.5-pro",
+                        "gemini-1.5-flash-latest",
+                        "gemini-1.5-pro-latest",
                     ],
                 ),
             },
@@ -39,13 +37,13 @@ class GeminiNode:
                 "system_instruction": ("STRING", {}),
                 "error_fallback_value": ("STRING", {"lazy": True}),
                 "seed": ("INT", {"default": seed, "min": 0, "max": 2**31, "step": 1}),
-                "temperature": ("FLOAT", {"default": -0.05, "min": -0.05, "max": 1, "step": 0.05}),
-                "num_predict": ("INT", {"default": 0, "min": 0, "max": 1048576, "step": 1}),
+                "temperature": ("FLOAT", {"default": -0.05, "min": -0.05, "max": 2.0, "step": 0.05}),
+                "num_predict": ("INT", {"default": 0, "min": 0, "max": 8192, "step": 1}),
             },
         }
 
-    RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("text",)
+    RETURN_TYPES = ("STRING", "STRING",)
+    RETURN_NAMES = ("positive_prompt", "negative_prompt",)
     FUNCTION = "ask_gemini"
 
     CATEGORY = "Gemini"
@@ -54,13 +52,25 @@ class GeminiNode:
         self.text_output: str | None = None
 
     def ask_gemini(self, **kwargs):
-        return (kwargs["error_fallback_value"] if self.text_output is None else self.text_output,)
+        positive_prompt = ""
+        negative_prompt = ""
+
+        if self.text_output:
+            try:
+                data = json.loads(self.text_output)
+                positive_prompt = data.get("positive", "")
+                negative_prompt = data.get("negative", "")
+            except json.JSONDecodeError:
+                print(f"ComfyUI-Gemini Error: Failed to decode JSON from response:\n{self.text_output}")
+            except Exception as e:
+                print(f"ComfyUI-Gemini Error: An unexpected error occurred during JSON parsing: {e}")
+
+        return (positive_prompt, negative_prompt)
 
     def check_lazy_status(
         self,
         prompt: str,
         safety_settings: str,
-        response_type: str,
         model: str,
         api_key: str | None = None,
         proxy: str | None = None,
@@ -85,9 +95,31 @@ class GeminiNode:
         else:
             genai.configure(api_key=api_key, transport="rest")
         model = genai.GenerativeModel(model, safety_settings=safety_settings, system_instruction=system_instruction)
-        generation_config = genai.GenerationConfig(
-            response_mime_type="application/json" if response_type == "json" else "text/plain"
+
+        # ▼▼▼ 変更点: ここから ▼▼▼
+        # 1. 出力してほしいJSONの「スキーマ（構造）」を定義
+        prompt_schema = {
+            "type": "OBJECT",
+            "properties": {
+                "positive": {
+                    "type": "STRING",
+                    "description": "A detailed, high-quality positive prompt for image generation."
+                },
+                "negative": {
+                    "type": "STRING",
+                    "description": "A detailed, high-quality negative prompt for image generation."
+                }
+            },
+            "required": ["positive", "negative"]
+        }
+
+        # 2. GenerationConfigに response_schema を設定
+        generation_config = GenerationConfig(
+            response_mime_type="application/json",
+            response_schema=prompt_schema
         )
+        # ▲▲▲ 変更点: ここまで ▲▲▲
+
         if temperature is not None and temperature >= 0:
             generation_config.temperature = temperature
         if num_predict is not None and num_predict > 0:
@@ -106,9 +138,9 @@ class GeminiNode:
 
 
 NODE_CLASS_MAPPINGS = {
-    "Ask_Gemini": GeminiNode,
+    "Ask_Gemini_Structured": GeminiNode,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "Ask_Gemini": "Ask Gemini",
+    "Ask_Gemini_Structured": "My Gemini Auto-Prompter", 
 }
